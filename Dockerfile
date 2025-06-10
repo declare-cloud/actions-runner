@@ -7,35 +7,30 @@ USER root
 
 # Define versions for the tools to be installed
 ARG GO_VERSION=1.24.4
-ARG GH_VERSION=2.74.0
+ARG GH_VERSION=2.74.1
 ARG KUBECTL_VERSION=v1.33.1
 ARG HELM_VERSION=3.18.2
 
-# Combine all installations into a single RUN command to reduce image layers
-# and ensure proper cleanup.
+# Corrected Dockerfile RUN command
 RUN apt-get update && \
-    # Install dependencies needed for downloading and adding repositories
+    # Install dependencies
     apt-get install -y --no-install-recommends \
         curl \
         ca-certificates \
-        gnupg \
-        lsb-release \
-        apt-transport-https && \
+        gnupg && \
     \
     # Install Go
     echo "Installing Go v${GO_VERSION}..." && \
     curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" -o go.tar.gz && \
     tar -C /usr/local -xzf go.tar.gz && \
     rm go.tar.gz && \
-    # Add Go to the PATH for all users
     echo 'export PATH=$PATH:/usr/local/go/bin' > /etc/profile.d/go.sh && \
     \
-    # Install GitHub CLI
+    # Install GitHub CLI by downloading the specific .deb package
     echo "Installing GitHub CLI v${GH_VERSION}..." && \
-    curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | gpg --dearmor -o /usr/share/keyrings/githubcli-archive-keyring.gpg && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" > /etc/apt/sources.list.d/github-cli.list && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends gh=${GH_VERSION}* && \
+    curl -fsSL "https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_amd64.deb" -o gh_cli.deb && \
+    dpkg -i gh_cli.deb && \
+    rm gh_cli.deb && \
     \
     # Install kubectl
     echo "Installing kubectl v${KUBECTL_VERSION}..." && \
@@ -51,7 +46,7 @@ RUN apt-get update && \
     chmod +x /usr/local/bin/helm && \
     rm -rf helm-v${HELM_VERSION}-linux-amd64.tar.gz linux-amd64 && \
     \
-    # Clean up apt caches to reduce image size
+    # Clean up apt caches
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
