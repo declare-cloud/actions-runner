@@ -136,4 +136,3 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.CONTAINER_TAG }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.EXTRA_TAG }}
-
