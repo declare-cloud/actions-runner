@@ -1,31 +1,33 @@
 //import js from '@eslint/js';
-import pluginNext from '@next/eslint-plugin-next';
 import parser from '@typescript-eslint/parser';
 
 export default [
   {
-    ignores: ['.next/**', 'node_modules/**', 'cache/**', 'test-results/**', 'coverage/**'],
+    // The '.next/**' directory has been removed from ignores.
+    ignores: ['node_modules/**', 'cache/**', 'test-results/**', 'coverage/**'],
   },
-  //js.configs.recommended,
+  // For a good set of baseline rules, you may want to uncomment the following line.
+  // You would also need to uncomment the `import js from '@eslint/js';` at the top.
+  // js.configs.recommended,
   {
-    name: 'ESLint Config - nextjs',
+    name: 'ESLint Config - base',
     languageOptions: {
       parser,
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
         ecmaFeatures: {
+          // JSX support is kept in case you are using React without Next.js
           jsx: true,
         },
       },
     },
-    plugins: {
-      '@next/next': pluginNext,
-    },
+    // The files pattern is kept as it's generic.
     files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
-    rules: {
-      ...pluginNext.configs.recommended.rules,
-      ...pluginNext.configs['core-web-vitals'].rules,
-    },
+
+    // The @next/next plugin and its associated rules have been removed.
+    // You can add other plugins or define your own rules here.
+    plugins: {},
+    rules: {},
   },
 ];
